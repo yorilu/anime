@@ -1,12 +1,288 @@
 <html>
 	<head>
-		<meta name="viewport" content="user-scalable=yes, width=device-width, initial-scale=1, maximum-scale=1">
+		<meta name="viewport" id="viewport" content="width=device-width, initial-scale=1">
 		<meta charset="utf-8">
+    <title>谷歌2015入境游海外游客大调查</title>
 		<script src="js/require.min.js" data-main="js/main.js"></script>
-        <link rel="stylesheet" type="text/css" href="css/scenes.css"/>
-	</head>
-	<body>
-		<div class="mask hidden">loading</div>
-		<div class="opening hidden">loading</div>
+    <link rel="stylesheet" type="text/css" href="css/scenes.css"/>
+    <style type="text/css">
+      @font-face {
+        font-family: "NotoSans";
+        src: url("resource/NotoSans-Regular.woff") format("woff");
+      }
+      @font-face {
+        font-family: "Roboto";
+        src: url("resource/Roboto-Thin.woff") format("woff");
+      }
+      @font-face {
+        font-family: 'Source-Han-Light';
+        src: url("resource/Source-Han-Light.bmp") format('woff');
+        font-weight: 200;
+        font-style: normal;
+      }
+      body {
+         background-color: #4BC5E0;
+      }
+      .container {
+        -moz-transform: translate3d(-50%, -50%, 0);
+        -o-transform: translate3d(-50%, -50%, 0);
+        -ms-transform: translate3d(-50%, -50%, 0);
+        -webkit-transform: translate3d(-50%, -50%, 0);
+        transform: translate3d(-50%, -50%, 0);
+        top: 50%;
+        left: 50%;
+        position: absolute;
+        //width:1024px;
+        //height:768px;
+        margin: 0px;
+        overflow: hidden;
+      }
+      .font-load-roboto {
+        font-family: Roboto;
+        position: absolute;
+      }
+      .font-load-source-han {
+        font-family: Source-Han-Light;
+        position: absolute;
+      }
+      .font-load-notosans {
+        font-family: NotoSans;
+        position: absolute;
+      }
+      .canvas-loading {
+        width: 100%;
+        height: 100%;
+        position: relative;
+        top:0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: #4BC5E0;
+      }
+      .canvas-loading div {
+        left: 0px;
+        top: 0px;
+        bottom: 0px;
+        right: 0px;
+        padding: 0px;
+        margin: auto;
+        position: absolute;
+      }
+      .canvas-loading .earth-ctn {
+        -webkit-border-radius: 50%;
+        -moz-border-radius: 50%;
+        border-radius: 50%;
+        height: 76.8px;
+        width: 76.8px;
+        overflow: hidden;
+        z-index: 2;
+        background-color: #3275FF;
+        -webkit-mask-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAA5JREFUeNpiYGBgAAgwAAAEAAGbA+oJAAAAAElFTkSuQmCC);
+      }
+      .canvas-loading .earth-ctn .map-two {
+        height: 92.16px;
+        width: 190px;
+        top: -10%;
+        -webkit-animation: movingEarth 1s infinite linear;
+        /* Safari 4+ */
+        -moz-animation: movingEarth 1s infinite linear;
+        /* Fx 5+ */
+        -o-animation: movingEarth 1s infinite linear;
+        /* Opera 12+ */
+        animation: movingEarth 1s infinite linear;
+        /* IE 10+, Fx 29+ */
+      }
+      .canvas-loading .map-two img {
+        height: 92.16px;
+        width: 92.16px;
+      }
+      .canvas-loading .year-ctn {
+        font-size: 380%;
+        color: #FFFFFF;
+        width: 153.6px;
+        height: 102.4px;
+        top: -267.2px;
+        text-align: center;
+        font-weight: lighter;
+      }
+      @media all and (orientation: portrait) {
+        #orientation-hint { 
+          display:block;
+          background:rgb(75, 197, 224);
+          width:100%;
+          height:100%;
+          z-index: 50000;
+          -moz-transform: translate3d(-50%, -50%, 0);
+          -o-transform: translate3d(-50%, -50%, 0);
+          -ms-transform: translate3d(-50%, -50%, 0);
+          -webkit-transform: translate3d(-50%, -50%, 0);
+          transform: translate3d(-50%, -50%, 0);
+          top: 50%;
+          left: 50%;
+          position: absolute;
+          //width:1024px;
+          //height:768px;
+          margin: 0px;
+        }
+        #orientation-hint img {
+          position:absolute;
+          top:0;
+          right:0;
+          left:0;
+          bottom:0;
+          margin:auto;
+        } 
+        #orientation-hint p {
+          position:absolute;
+          top:65%;
+          right:0;
+          left:0;
+          bottom:0;
+          margin:auto;
+          font-size:2em;
+          text-align: center;
+          color:white;
+        } 
+      }
+      @media all and (orientation: landscape) {
+         #orientation-hint { display:none;}
+      }
+      </style>
+ </head>
+	<body scroll="no">
+    <img src="resource/icon.png" style="left:-10000; position:absolute;"></img>
+    <div id="orientation-hint">
+      <img src="resource/horizontal.svg"/>
+      <p>请打开音频，将手机侧过来观看:)</p>
+    </div>
+    <div class="font-load-source-han" style="top:-10000">source-han</div>
+    <div class="font-load-roboto" style="top:-10000">roboto</div>
+    <div class="font-load-notosans" style="top:-10000">notosans</div>
+    <div class="container">
+      <div class="canvas-loading">
+        <div class="year-ctn">2015</div>
+        <div class="earth-ctn">
+        <div class="map-two">
+          <img src="./resource/map.svg" style="top: 0px; left: 0px;"></img>
+          <img src="./resource/map.svg" style="top: 0px; left: 92.16px;"></img>
+        </div>
+      </div>
+      </div>
+      <div class="canvas scene-wrapper"></div>
+    </div>
+    
+   <script type="text/javascript">
+      var ua = navigator.userAgent;
+      function isMobile() {
+        if (/(iPhone|iPod|Android|ios|SymbianOS)/i.test(navigator.userAgent)) {
+          return true;
+        } else {
+          return false;
+        }
+      }
+
+      var window_w = document.body.clientWidth;
+      var window_h = document.body.clientHeight;
+      var container = document.getElementsByClassName('container')[0];
+
+      // Virtual size beofre scaling.
+      var canvas_w = 1024;  // default: 1024
+      var canvas_h = 768; // default: 768
+      // Real size after scaling.
+      var canvas_real_w;  // default: 1024
+      var canvas_real_h; // default: 768
+
+      // var container_w;
+      // var container_h;
+      var ratio = 0.75; // Width/Height ratio
+      var scale = 1;
+
+      if (window_h / window_w < ratio) {
+        canvas_real_h = window_h;
+        canvas_real_w =  window_h / ratio;
+        scale = canvas_real_h / canvas_h + "";
+      } else {
+        canvas_real_w = window_w;
+        canvas_real_h = window_w * ratio;
+        scale = canvas_real_w / canvas_w + "";
+      }
+
+      function getSupportedPropertyName() {
+        var properties = ["transform", "msTransform", "webkitTransform", "mozTransform", "oTransform"];
+        for (var i = 0; i < properties.length; i++) {
+          if (typeof document.body.style[properties[i]] != "undefined") {
+            return properties[i];
+          }
+        }
+        return null;
+      }
+      var transformProperty = getSupportedPropertyName();
+      var viewport = document.getElementById('viewport');
+      
+      if (isMobile()) {
+        viewport.content = 'user-scalable=no, width=device-width,initial-scale='+scale*5/4+',minimal-ui';
+        container.style[transformProperty] = "translate3d(-50%, -50%, 0)";
+      } else {
+        container.style[transformProperty] = "translate3d(-50%, -50%, 0) scale("+scale+")";
+      }
+      container.style.left = '50%';
+      container.style.top = '50%'; 
+    </script>
+		<style type="text/css">
+      
+      @-webkit-keyframes movingEarth {
+        0% {
+          -moz-transform: translateX(0px);
+          -o-transform: translateX(0px);
+          -ms-transform: translateX(0px);
+          -webkit-transform: translateX(0px);
+          transform: translateX(0px); }
+        100% {
+          -moz-transform: translateX(-95px);
+          -o-transform: translateX(-95px);
+          -ms-transform: translateX(-95px);
+          -webkit-transform: translateX(-95px);
+          transform: translateX(-95px); } }
+      @-moz-keyframes movingEarth {
+        0% {
+          -moz-transform: translateX(0px);
+          -o-transform: translateX(0px);
+          -ms-transform: translateX(0px);
+          -webkit-transform: translateX(0px);
+          transform: translateX(0px); }
+        100% {
+          -moz-transform: translateX(-95px);
+          -o-transform: translateX(-95px);
+          -ms-transform: translateX(-95px);
+          -webkit-transform: translateX(-95px);
+          transform: translateX(-95px); } }
+      @-o-keyframes movingEarth {
+        0% {
+          -moz-transform: translateX(0px);
+          -o-transform: translateX(0px);
+          -ms-transform: translateX(0px);
+          -webkit-transform: translateX(0px);
+          transform: translateX(0px); }
+        100% {
+          -moz-transform: translateX(-95px);
+          -o-transform: translateX(-95px);
+          -ms-transform: translateX(-95px);
+          -webkit-transform: translateX(-95px);
+          transform: translateX(-95px); } }
+      @keyframes movingEarth {
+        0% {
+          -moz-transform: translateX(0px);
+          -o-transform: translateX(0px);
+          -ms-transform: translateX(0px);
+          -webkit-transform: translateX(0px);
+          transform: translateX(0px); }
+        100% {
+          -moz-transform: translateX(-95px);
+          -o-transform: translateX(-95px);
+          -ms-transform: translateX(-95px);
+          -webkit-transform: translateX(-95px);
+          transform: translateX(-95px); }
+      }
+    </style>
 	</body>
 </html>

@@ -1,62 +1,74 @@
-;require(['anole', 'zepto', 'TweenLite', 'TimelineLite', 'CSSPlugin'], function (anole){
-  var scene = new anole.Scene(5, anole.canvas, false);
-  scene.createDom = function() {
-    this.container.css("overflow", "visible");
-    this.youtube_logo = $("<div><img src='./resource/youtube.png'></img></div>").addClass("youtube-logo").appendTo(this.container);
-    this.browser_l = $("<div></div>").addClass("browser-left").appendTo(this.container);
-    this.browser_r = $("<div></div>").addClass("browser-right").appendTo(this.container);
-    this.youtube = $("<div></div>").addClass("youtube").appendTo(this.browser_l);
-    this.boardinfo = $("<div><img src='./resource/boardinfowithbutton.png'></img></div>").addClass("boardinfo").appendTo(this.browser_l);
-    for (var i = 0; i < 3; i++) {
-      var profile = $("<div><img src='./resource/profileimagewithshadow.png'></img></div>").addClass("profile-list p" + i);
-      $("<div></div>").addClass("profile-dash").appendTo(profile);
-      $("<div></div>").addClass("profile-dash").appendTo(profile);
-      profile.appendTo(this.browser_l);
-    }
-    for (var i = 1; i < 6; i++) {
-      var video = $("<div><img src='./resource/videolist_image" + i + "withshadow.png'></img></div>").addClass("video-list v" + (i - 1));
-      $("<div></div>").addClass("video-dash").appendTo(video);
-      $("<div></div>").addClass("video-dash").appendTo(video);
-      $("<div></div>").addClass("video-dash").appendTo(video);
-      video.appendTo(this.browser_r);
-    }
-    this.youtube_fly = $("<div></div>").addClass("youtube-flyin").appendTo(this.container);
-  }
-	scene.animation = function() {
-    var duration = 0.05;
-    this.tl.to(this.youtube_fly, 0.5, {top: 0.0133 * anole.getSceneH(), left: 0.1 * anole.getSceneW(), height: 0.267 * anole.getSceneH(), width: 0.36 * anole.getSceneW(), opacity: 1})
-            //.from(this.youtube, duration, {opacity: 0})
-            .from(this.boardinfo, duration, {opacity: 0});
-    //iterate through profile and video
-    var profileCount = this.container.find(".profile-list").length;
-    var videoCount = this.container.find(".video-list").length;
-    //common variables
-    var profileDashHeight = anole.getSceneH() * 0.04;
-    var profileDashWidth = anole.getSceneW() * 0.25;
-    var videoDashHeight = anole.getSceneH() * 0.03;
-    var videoDashWidth = anole.getSceneW() * 0.1;
+require(['anole', 'zepto', 'TweenLite', 'CSSPlugin', 'TimelineLite', 'EasePack', 'TextPlugin'], function(anole) {
 
-    for(var i = 0; i < profileCount; i++) {
-      var thisProfile = this.container.find(".profile-list.p" + i);
-      this.tl.from(thisProfile, duration, {opacity: 0});
-      var profileDash = this.container.find(".p" + i + " .profile-dash");
-      for(var j = 0; j < profileDash.length; j++) {
-        this.tl.set(profileDash[j], {top: j * profileDashHeight, width: Math.floor((Math.random() * profileDashWidth) + 1)})
-        .from(profileDash[j], duration, {scaleX:0, transformOrigin:"left"});
-      }
+
+  var scene = new anole.Scene(5, anole.canvas, true);
+  scene.createDom = function() {
+    // marco that from previous scene3
+    anole.setBackgroundColor('rgb(251, 222, 67)');
+    anole.setSubtitle('是什么吸引我们来中国的呢？');
+    this.container.find(".floating-text").remove();
+    this.container.find(".main").remove();
+    this.originalText = this.container.find('.text');
+    this.originalChair = this.container.find(".chair2")
+    this.videos = Array();
+    var texts = ["","","","","","","",""];// old codes
+    this.titles = [];
+    var video = []
+    for (var i=1;i<=6;i++) {
+      var val = i;
+      if (i==1)
+        val = i+"_nobutton"
+      var v = $("<div><img src='./resource/video"+val+".svg'></img></div>").addClass("video").addClass("v"+i).appendTo(this.container);
+      this.videos.push(v);
+      this.titles.push($("<div></div>").addClass("title").addClass("t"+i).text(texts[i]).appendTo(v));
     }
-    for(var i = 0; i < videoCount; i++) {
-      var thisVideo = this.container.find(".video-list.v" + i);
-      this.tl.from(thisVideo, duration, {opacity: 0});
-      var videoDash = thisVideo.find(".v" + i + " .video-dash");
-      for(var j = 0; j < videoDash.length; j++) {
-        this.tl.set(videoDash[j], {top: j * videoDashHeight, width: Math.floor((Math.random() * videoDashWidth) + 1)})
-        .from(videoDash[j], duration, {scaleX:0, transformOrigin:"left"});
-      }
+    var texts_out = ["传统风俗","历史故事","民间工艺"];
+    this.titles_out = [];
+    for (var i in texts_out){
+      this.titles_out.push($("<div></div>").addClass("title").addClass("o"+i).text(texts_out[i]).appendTo(this.container));
     }
-  }
-	scene.cleanup = function() {
-    this.container.removeClass("over-logo");
-  }
+  };
+
+  scene.animation = function() { 
+    // var tinyTl = new TimelineLite();
+    var delta = 0.8;
+    this.tl.addLabel('begin')
+          .to([this.originalText], delta*2, {delay:delta, opacity:0}, 'begin')
+          var x = ["13%","57%","36%"];
+          var y = ["52%","55%","30%"];
+          var x = ["36%","61%","1%","1%","47%","74%"];
+          var y = ["32%","10%","10%","45%","63%","40%"];
+          for (var i in this.videos){
+            console.log(this.videos[i]);
+            this.tl.to(this.videos[i],delta*2,{delay:-2*delta,opacity:1,left:x[i],top:y[i],y:"0%",scaleX:1,scaleY:1});
+          }
+          this.tl.to([this.originalChair], delta, {delay:-2*delta, opacity:0});
+          this.tl.call(function() {
+            anole.setSubtitle('是传统风俗，民间工艺，还是历史故事？');
+          });
+          this.tl.to(this.titles_out,delta*2, {opacity:1}, '+='+delta*2)
+                 .to(this.titles_out, 3, {});
+          
+        //        .to(this.videos,delta*2,{y:"0%",delay:-delta})
+          //      .call(function(){$("#scene5 .video").toggleClass("float-cloud")})
+          /*
+          .to(this.v_ctn, delta*2, {delay:delta, opacity:1}, 'begin')
+          .to(this.hand, delta, {x:"-200%",delay: delta})
+          .to(this.hand, delta, {x:"0%"})
+          .to(this.v_ctn, 2*delta, {x:"90%",delay:-delta})
+          .to(this.titles[0], 2*delta, {opacity:0,x:"50%", delay:-2*delta})
+          .to(this.titles[1], 2*delta, {opacity:1,x:"0%", delay:-2*delta})
+          .to(this.hand, delta, {x:"-200%",delay: 2*delta})
+          .to(this.hand, delta, {x:"0%"})
+          .to(this.v_ctn, 2*delta, {x:"180%",delay:-delta})
+          .to(this.titles[1], 2*delta, {opacity:0,x:"50%",delay:-2*delta})
+          .to(this.titles[2], 2*delta, {opacity:1,x:"0%",delay:-2*delta})*/
+  };
+  scene.cleanup = function() {
+    this.originalText.remove();
+    this.container.find(".chair2").remove();
+    this.container.find(".chair1").remove();
+    // this.tl.to(this.container,1,{opacity:0})
+  };
   anole.addScene(scene);
 });

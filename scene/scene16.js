@@ -1,89 +1,53 @@
-;require(['anole', 'zepto', 'TweenLite', 'CSSPlugin', 'TimelineLite'], function (anole){
-	var scene = new anole.Scene(16, anole.canvas, false);
-	scene.createDom = function() {
-		if (!this.main){
-			this.container.find(".scene16").remove();
-			this.scene = anole.$$('.scene16','<div class="scene16"></div>', this.container);
-      var html = 
-                  '<div class="map"></div>'+
-                  '<div class="left-number">0%</div>'+
-                  '<div class="number">75%</div>'+
-                  '<div class="cir-div">'+
-                   '<div class="bg-cir"></div>'+
-                   '<div class="goo-cir"></div>'+
-                   '<svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="0" height="0">'+ 
-                    '<defs>'+
-                    '<clipPath id="flood">'+
-                      '<rect id="J_Flood_anime" width="800" height="600" style="fill:#000;stroke-width:1;stroke:rgb(0,0,0)" y="600">'+
-                       // '<animate id="J_Flood_anime" attributeName="y" from="600" to="0" begin="0s" dur="3s" repeatCount="1" />'+
-                      '</rect>'+
-                    '</clipPath>'+
-                    '</defs>'+
-                   '</svg>'+
-                   
-                   '<div class="pie-pin"></div>' +
-                   '<svg class="cir"  xmlns="http://www.w3.org/2000/svg" version="1.1" width="100%" height="100%">'+ 
-                    '<defs>'+
-                    '<clipPath id="theSVGPath">'+
-                      '<circle stroke="#000000" stroke-miterlimit="10" cx="400" cy="400" r="300" />'+
-                    '</clipPath>'+
-                    '</defs>'+
-                   '</svg>'+
-                 '</div>';
-                 
-      this.scene.html(html);
-		}
-	}
-	scene.animation = function() {
-    var that = this;
-    var tl = new TimelineLite();
-    //TODO 半圆动画
-    tl
-    .to('.map', 1, {width:144,height:104,left:370,top:222})
-    .call(function(){
-       $(".map").html('<div class="perc">2013</div>');
-       $(".cir").show();
-       $(".number").show();
-     }.bind(this))
-    .to('.cir', 0.3, {rotation:0})
-    .to('.pie-pin', 0.5, {width:60,height:100,top:45,right:39,display:'block'})
-	  .to('.pie-pin', 0.3, {width:45.5,height:87.5,top:53,right:53})
-    .call(function(){
-      $(".goo-cir").show();
-    })
-    .call(function(){
-       $(".perc").html('2014');
-       $(".number").show();
-       
-       
-      // background-position: 0 -100px;
-       //top: 100px;
-       
-       var number = 75
-       var inter = setInterval(function (){
-         $(".number").html(++number + "%");
-         if(number == 84){
-           clearInterval(inter);
-           $(".goo-cir").show();
-           var left = $(".left-number");
-           left.show();
-           var start = 0
-           var han = setInterval(function (){
-             if(start++ <43){
-               left.html(start + "%");
-             }else{
-               clearInterval(han);
-             }
-           },50)
-           tl.to('.goo-cir', 1.8, {top:0,"background-position":"0 0"});
-           
-         }
-       },50)
-     }.bind(this))
-	}
-	scene.cleanup = function() {
-    $(".number").remove();
-    $(".left-number").remove();
-	}
-	anole.addScene(scene);
+﻿;require(['anole', 'zepto', 'TweenLite', 'CSSPlugin', 'TimelineLite'], function (anole){
+  var scene = new anole.Scene(16, anole.canvas, false);
+  var sceneW = anole.getSceneW();
+  var sceneH = anole.getSceneH();
+  var resourceUrl = anole.getResourceUrl();
+
+  scene.createDom = function() {
+    anole.setBackgroundColor("rgb(198, 60, 177)");
+    this.mobile = $("<div class='mobile'>").appendTo(this.container);
+    this.video = anole.getVideo('toilet');
+    $(this.video).appendTo(this.mobile);
+    this.dialog = $("<div class='dialog'></div>").appendTo(this.container);
+    this.marcoBody = $("<div class='marco2_body'></div>").appendTo(this.container);
+    this.head = $("<div class='marco2_head'></div>").appendTo(this.marcoBody);
+    this.leftArm1 = $("<div class='marco2_arm1 scratch'></div>").appendTo(this.marcoBody);
+    this.leftArm2 = $("<div class='marco2_arm2'></div>").appendTo(this.leftArm1);
+    this.leftHand = $("<div class='marco2_hand'></div>").appendTo(this.leftArm2);
+    this.rightArm1 = $("<div class='marco2_arm1 right'></div>").appendTo(this.marcoBody);
+    this.rightArm2 = $("<div class='marco2_arm2'></div>").appendTo(this.rightArm1);
+    this.rightHand = $("<div class='marco2_hand'></div>").appendTo(this.rightArm2); 
+    TweenLite.set(this.rightArm1, {scaleX: -1, rotation: 90, left: -0.166 * sceneW});
+  }
+
+
+  scene.animation = function() {
+    var duration = 0.2;
+    anole.setSubtitle("还有，这个真的是马桶吗？");
+    
+    var videoPlay = (function() {
+      return ( function() {
+        anole.playMedia(this.video);
+       }.bind(scene) );
+    })();
+
+    this.tl.addLabel("playVideo", "+=2")
+          .to(this.mobile, duration, {scale: 1.5, left: 0}, "playVideo")
+          .call(videoPlay)
+          .to(this.dialog, duration*4, {opacity: 1}, "playVideo+=2.5")
+          .to(this.marcoBody, duration * 3, {scale: 0.28, top: 0.66 * sceneH, /*left: "-=" + 0.2 * sceneW, */ ease: Linear.easeOut}, "playVideo-=0.4")
+          .to(this.video, 4, {});
+  }
+
+  scene.cleanup = function() {
+    if (this.video) {
+      this.video.pause();
+      this.video.currentTime = 0;
+      anole.putbackVideo('toilet', this.video);
+      TweenLite.set(this.video, {opacity: 1, scale: 1, left: -0.01 * sceneW});
+    }
+  }
+
+  anole.addScene(scene);
 });

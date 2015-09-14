@@ -1,92 +1,77 @@
-console.log("Scene3.js running...");
-;require(['anole', 'zepto'], function (anole){
-	var display_delta = 5;
-	var display_ppm = function(){
-	 var hides = $("#scene3 .paperman.hide");
-	 if (hides.length<1)
-		return;
-	 var idx = parseInt(hides.length * Math.random());
-	 hides[idx].classList.toggle("hide",false);
-	 hides[idx].classList.toggle("open",true);
-	 // setTimeout(display_ppm,display_delta);
+;require(['anole', 'zepto', 'TweenLite', 'CSSPlugin', 'AttrPlugin', 'TimelineLite', 'EasePack'], function(anole) {
+	var scene = new anole.Scene(3, anole.canvas, false);
+	var sceneW = anole.getSceneW();
+	var sceneH = anole.getSceneH();
+	var resourceUrl = anole.getResourceUrl();
+    var salmonColour = '#f78a64';
+    var saffronColour = '#FFAD2A';
+    var cellphoneColour = '#ffad29';
+
+	scene.createDom = function() {
+		// Part 1:
+		this.container.addClass('salmon-bg');
+        anole.setBackgroundColor(salmonColour);
+		// Marco 2.0
+		this.marco20 = $('<div></div>').addClass('marco20')
+			.append($('<img src="resource/marco2.0_head.png">').addClass('marco20-head'))
+			.append($('<img src="resource/marco2.0_body.png">').addClass('marco20-body'))
+			.append($('<img src="resource/marco2.0_hand_leftwithmap.png">').addClass('marco20-hands marco20-hand-leftwithmap'))
+			.append($('<img src="resource/marco2.0_hand_right.png">').addClass('marco20-hands marco20-hand-right'))
+			.append($('<img src="resource/marco2.0_leg.png">').addClass('marco20-legs marco20-leg-left'))
+			.append($('<img src="resource/marco2.0_leg.png">').addClass('marco20-legs marco20-leg-right'));
+		
+		this.marco20.appendTo(this.container);
+
+
+		// Cellphone (portrait)
+		this.cellphonePortrait = $('<img src="resource/mobile_portrait.png">').addClass('cellphonePortrait')
+			.appendTo(this.marco20);
+
+
+		// Part 2:
+		this.part2Wrapper = $('<div></div>').addClass('wrapper-part2')
+			.appendTo(this.container);
+
+
+		// Marco watching video
+		this.marcoBack = $('<img src="resource/manonchair_marco.svg">').addClass('marco-back')
+			.appendTo(this.part2Wrapper);
+		this.marcoHandHoldingMobilePalm = $('<img src="resource/hand_holdingmobile_palm.svg">').addClass('marco-hand-holding-mobile palm')
+			.appendTo(this.part2Wrapper);
+		this.marcoHandHoldingMobileThumb = $('<img src="resource/hand_holdingmobile_thumb.svg">').addClass('marco-hand-holding-mobile thumb')
+			.appendTo(this.part2Wrapper);
+
+		// Cellphone (landscape)
+		this.cellphoneLandscape = $('<div></div>').addClass('cellphoneLandscape')
+			.append($('<img src="resource/video1.png">').addClass('video-cover'))
+			.appendTo(this.part2Wrapper);
+
+
+		this.container.find('img').prop('draggable', false);
 	}
-	var data = {year:1271,popu:123456789}
-	var data_final = {year:2014,popu:128498301}
-	var subway_text_create = function(){
-		var ctn = $("<div></div>").addClass("subway-text-ctn");
-		var year = $("<div></div>").addClass("subway-year").appendTo(ctn);
-		var title = $("<div></div>").addClass("subway-title").text("中国入境旅游人数").appendTo(ctn);
-		var popu = $("<div></div>").addClass("subway-popu").appendTo(ctn);
-		return ctn;
+
+	scene.animation = function() {
+		anole.setSubtitle('从小我就被五花八门的旅游纪录片吸引。');
+		
+        this.tl
+            .from(this.marco20, 0.5, {left: '5%', top: '12%', width: '30%', height: '86%', delay: 0.5})
+            .to(this.cellphonePortrait, 0.5, {opacity: 1, scale:0.3, left: '60%', top: '-12%'})
+            .addLabel('transitionBegin')
+            .call(function() { anole.setBackgroundColor(cellphoneColour); })
+            .to(this.marco20, 1, {left: '-10%', top:'20%', scale:1.2, opacity:0, ease: Power4.easeOut}, 'transitionBegin')
+            .to(this.cellphonePortrait, 0.1, {scale: 5, zIndex: 100}, 'transitionBegin')
+            .addLabel('transitionEnd')
+            .addLabel('showMarcoBack','-=0.6')
+            .set(this.marco20, {display: 'none'}, 'transitionEnd')
+            .set(this.part2Wrapper, {display: 'block'}, 'showMarcoBack')
+            //.call(function() { anole.setBackgroundColor(salmonColour); })
+            //.addLabel('showMarcoBack', '-=0.2')
+            .to(this.part2Wrapper, 0.2, {opacity: 1, top: 0}, 'showMarcoBack')
+            .to(this.part2Wrapper, 2, {});
 	}
-	var convert = function(s){
-		var l = s.length;
-		var head = (l+2) % 3 +1;
-		var res = s.substr(0,head);
-		for (;head<l;head+=3){
-			res += "," + s.substr(head,3);
-		}
-		return res;
+
+	scene.cleanup = function() {
 	}
-	var update_text = function(){
-		$(".subway-year").text(parseInt(data.year));
-		var popu = String(parseInt(parseInt(data.popu)));
-		popu = convert(popu);
-		$(".subway-popu").text(popu);
-	}
-	anole.addScene({
-		name: "scene3.js",
-		id:3,
-		musicName: 'vo3',
-		onInit: function (){
-			this.music = anole.getMedia(this.musicName);
-			this.scene = anole.$$("#scene3",'<div id = "scene3" class = "scene"></div>',anole.canvas);
-			this.subway_paperman = anole.$$("#subway-paperman","<div id = 'subway-paperman' class='papermans'></div>",this.scene);
-			this.subway_paperman.html($("#papermans").html());
-			this.subway = anole.$$("#subway",'<div id = "subway" class = "subway"></div>',this.scene);
-			this.subup = anole.$$("#subway-up","<div id='subway-up' class='subway-up'>",this.subway);
-			this.subtext = anole.$$(".subway-text",subway_text_create,this.subup);
-			this.subhead = anole.$$("#subway-head","<div id='subway-head' class='subway-head'>",this.subup);
-			this.subdown = anole.$$("#subway-down","<div id='subway-down' class='subway-down'>",this.subway);
-			this.sublblock = anole.$$("#subway-left-block","<div id = 'subway-left-block' class='left subway-block'></div>",this.subdown);
-			this.subrblock = anole.$$("#subway-right-block","<div id = 'subway-right-block' class='right subway-block'></div>",this.subdown);
-			this.sublgate = anole.$$("#subway-left","<div id = 'subway-left' class='subway-left'></div>",this.subdown);
-			this.subrgate = anole.$$("#subway-right","<div id = 'subway-right' class='subway-right'></div>",this.subdown);
-			this.subway_paperman.find(".marco").toggleClass("tourist");
-			data = {year:1271,popu:123456789};
-			update_text();
-		},
-		onStart: function (finish){
-			anole.playMedia(this.music);
-			this.tl1 = new TimelineLite();
-			this.tl1.call(display_ppm)
-					.to($("#subway-left"), 0.3, {x:"100%", ease:Linear.easeNone,delay:0.3})
-					.call(function(){$("#papermans").css("display","none");})
-					.to($("#subway-right"), 0.3, {x:"-100%", ease:Linear.easeNone},"-=0.5")
-					.to(this.subway,0.5,{delay:0.1,scaleX:"0.5",scaleY:"0.5",y:"5%"})
-					.to(data,1,{year:data_final.year,popu:data_final.popu,onUpdate:update_text,ease:Linear.easeNone})
-					.call(function() {
-						if (!this.music.ended) {
-							$(this.music).on('ended', finish);
-						} else {
-							finish();
-						}
-					}.bind(this));
-		},
-		onBack: function(finish){
-			$("#scene3").remove();
-			$("#scene2").remove();
-			$("#scene1").show();
-			finish();
-		},
-		onEnd: function (){
-			var hides = $("#scene3 .paperman.hide");
-			hides.each(function(idx,elm){
-				elm.classList.toggle("hide");
-				elm.classList.toggle("open");
-			});
-			this.tl1 && this.tl1.progress(1);
-			$("#scene2").hide();
-		},
-	})
+
+	anole.addScene(scene);
 });

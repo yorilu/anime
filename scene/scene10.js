@@ -1,29 +1,49 @@
-;require(['anole', 'zepto', 'TweenLite', 'TimelineLite', 'CSSPlugin', 'EasePack'], function(anole, Scene){
+/**
+ * Created by michael on 8/22/15.
+ */
+require(['anole', 'zepto', 'TweenLite', 'CSSPlugin', 'TimelineLite', 'EasePack', 'TextPlugin'], function(anole) {
+    var scene = new anole.Scene(10, anole.canvas, true);
+    scene.createDom = function() {
+        anole.setBackgroundColor('rgb(134, 204, 23)');
+        this.groupContainer = $('<div class="group"></div>');
+        this.chair = $('<div class="chair"></div>');
+        this.man = $('<div class="person man"></div>');
+        this.man.append($('<div class="right-arm"></div>'));
+        this.man.append($('<div class="left"><div class="left-arm"></div><div class="left-hand"></div></div>'));
+        this.man.append($('<div class="right-hand"></div>'));
+        this.man.append($('<div class="head"></div>'));
+        this.man.append($('<div class="mobile"></div>'));
 
-  var scene = new anole.Scene(10, anole.canvas, false);
+        this.woman = $('<div class="person woman"></div>');
+        this.woman.append($('<div class="newspaper"></div>'));
+        this.woman.append($('<div class="left-arm"></div>'));
+        this.woman.append($('<div class="right-arm"></div>'));
+        this.woman.append($('<div class="right-hand"></div>'));
+        this.woman.append($('<div class="head"></div>'));
+        this.woman.append($('<div class="cocktail"></div>'));
 
-  scene.id = 10;
-  scene.createDom = function() {
-    this.ques = $('<div>?</div>').addClass('ques').appendTo(this.container);
-    this.banner = $('<div>老外愿意为什么</div>').addClass('banner').appendTo(this.container);
-    this.figure = $('<div></div>').addClass('figure').appendTo(this.container);
-    this.text = $('<div></div>').addClass('text').appendTo(this.banner);
-    this.man = $('<div></div>').addClass('man').appendTo(this.figure);
-    this.bag1 = $('<div></div>').addClass('bag1 bag-green').appendTo(this.figure);
-    this.bag2 = $('<div></div>').addClass('bag2 bag-green').appendTo(this.figure);
-    this.bag3 = $('<div></div>').addClass('bag3 bag-red').appendTo(this.figure);
-  }
-  scene.animation = function() {
-    // TODO: add disappearing of scene9's objests
-    this.tl.set(this.ques, {fontSize: "8em"})
-           .from(this.ques, 1, {top: "-100%", ease:Elastic.easeOut})
-           .to(this.ques, 1, {fontSize: "4em", left: "63%", top: "18%"})
-           .set(this.ques, {opacity: 0})
-           .addLabel('show')
-           .to(this.banner, 0.5, {opacity:1}, 'show')
-           .to(this.figure, 0.5, {opacity:1}, 'show')
-  }
-  scene.cleanup = function() { // Called before entering next scene.
-  }
-  anole.addScene(scene);
-})
+        this.groupContainer.append(this.chair);
+        this.groupContainer.append(this.man);
+        this.groupContainer.append(this.woman);
+
+        this.text = $('<div class="text"><p class="text-main"><span class="number">50</span><span class="percent">%</span></p><p class="text-sub">的游客用手机搜索旅游相关信息</p></div>');
+        this.container.append(this.text);
+        this.container.append(this.groupContainer);
+    };
+
+
+    scene.animation = function() {
+        anole.setSubtitle('每两个人当中就有一个用手机搜索旅游相关信息。');
+        this.tl
+            .addLabel('start')
+            .to(this.container.find('.main'), 0.5, {scale: 0}, 'start')
+            .set(this.container.find('.main'), {display: 'none'})
+            .fromTo(this.groupContainer, 1, {scale: 0}, {scale: 0.6, ease: Elastic.easeOut},'start')
+            .fromTo(this.text, 0.5, {scale: 0}, {scale: 1}, 'start+=0.6')
+            .to(this.text, 5, {})
+    };
+    scene.cleanup = function() {
+
+    };
+    anole.addScene(scene);
+});

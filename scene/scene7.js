@@ -1,118 +1,75 @@
-;require(['anole', 'zepto', 'TweenLite', 'TimelineLite', 'CSSPlugin', 'EasePack'], function(anole, Scene) {
+;require(['anole', 'zepto', 'TweenLite', 'CSSPlugin', 'AttrPlugin', 'TimelineLite'], function (anole){
 
-    var DATA = [{
-        label: '饮食安全',
-        percent: 61
-    }, {
-        label: '如厕不便',
-        percent: 51
-    }, {
-        label: '欺诈宰客',
-        percent: 35
-    }, {
-        label: '人多拥挤',
-        percent: 33
-    }];
+  var scene = new anole.Scene(7, anole.canvas, true);
+  var sceneW = anole.getSceneW();
+  var sceneH = anole.getSceneH();
 
-    var scene = new anole.Scene(7, anole.canvas, true);
-    scene.createDom = function() {
-        this.container.find('.topbar').remove();
-        this.container.find('.tag').remove();
-        this.container.find('#browser-right').remove();
-        this.container.find('#youtube').remove();
-        this.container.find('.like-bar').children().remove();
-        this.container.find('.page-ctn').remove(); // TODO: Use tween.
-        this.container.find('.shade').remove();
-        this.comments = this.container.find('.comments');
-        var heads = this.comments.find('.comment-head');
+  scene.createDom = function() {
+    anole.setBackgroundColor('#fbde43');
+    this.searchCtn = $("<div class='search-ctn'></div>").appendTo(this.container);
+    this.searchText = $("<span class='search-text'></span>").appendTo(this.searchCtn);
+    this.searchBar = $("<img class='search-bar' src='./resource/s7-google-search-bar-01_withmagnifier.png'></div>").appendTo(this.searchCtn);
+    this.hand = $("<img class='hand' src='./resource/s7-fat-hand-01.png'>").appendTo(this.container);
+    this.badge1 = $("<img class='badge' src='./resource/s7-badge-tcwarrior.png'>").appendTo(this.container);
+    this.badge2 = $("<img class='badge' src='./resource/s7-badge-dunhuang.png'>").appendTo(this.container);
+    this.badge3 = $("<img class='badge' src='./resource/s7-mp-badge-01.png'>").appendTo(this.container);
+    this.bingmayong = $("<div class='screen-video bingmayong'></div>").appendTo(this.container.find(".mobile-screen"));
+    this.dunhuang = $("<div class='screen-video dunhuang_full'></div>").appendTo(this.container.find(".mobile-screen"));
+    this.dunhuang_zoom = $("<div class='screen-video dunhuang_zoom'></div>").appendTo(this.container.find(".mobile-screen"));
+    this.mpolo_shadow = $("<img class='mpolo-shadow' src='./resource/s7-mpolo-shadow.png'/>").appendTo(this.dunhuang_zoom);
+      this.marco = $("<div class='marco2'></div>").appendTo(this.dunhuang_zoom);
+      $("<div class='marco2_left_leg'></div>").appendTo(this.marco);
+      $("<div class='marco2_right_leg'></div>").appendTo(this.marco);
+      $("<div class='marco2_hand_right'></div>").appendTo(this.marco);
+      $("<div class='marco2_body'></div>").appendTo(this.marco);
+      $("<div class='marco2_hand_left'></div>").appendTo(this.marco);
+      $("<div class='marco2_head'></div>").appendTo(this.marco);
+  }
+  scene.animation = function() {
+    var msg = '2015年，Google 搜索上最热门的丝路旅游元素是';
+    var msgs = [['兵马俑','兵马俑、'],['敦煌','敦煌、'],['马可波罗','还有...马可波罗。']];
 
-        // prepare data
-        this.commentList = this.container.find('.comment');
-        this.bubbles = [];
-        this.$dataBars = [];
-        this.$dataLabels = [];
-        this.$dataPercents = [];
+    var stext = this.searchText;
+    var silkroadpage = [this.container.find(".screen-video"),
+        this.container.find(".silk-road")];
+    this.tl.addLabel("loading")
+        .set(this.hand, {opacity:1})
+        .call(function(){anole.setSubtitle(msg);})
+        .fromTo(this.searchCtn,0.4,{left:"-100%"},{left:"0%"},"loading+=1.5")
+    ;
+    this.tl.addLabel("search1", "loading+=5")
+        .set(this.hand, {opacity:1}, "search1")
+        .call(function() {stext.html(msgs[0][0]);})
+        .call(function() {anole.setSubtitle(msgs[0][1]);})
+        .fromTo(this.hand, 0.1, {opacity:1}, {left:"-=20%"}, "search1")
+        .fromTo(this.hand, 0.2, {opacity:1}, {left:"+=20%"}, "search1+=0.2")
+        .fromTo(silkroadpage, 0.4, {opacity:1}, {left:"-=100%"}, "search1")
+        .fromTo(this.badge1, 0.2, {opacity:0}, {opacity:1}, "search1+=0.2")
+    ;
+      this.tl.addLabel("search2", "search1+=0.8")
+          .set(this.hand, {opacity:1}, "search2")
+          .call(function() {stext.html(msgs[1][0]);})
+          .call(function() {anole.setSubtitle(msgs[1][1]);})
+          .to(this.badge1, 0.1, {opacity:0}, "search2")
+          .fromTo(this.hand, 0.1, {opacity:1}, {left:"-=20%"}, "search2")
+          .fromTo(this.hand, 0.2, {opacity:1}, {left:"+=20%"}, "search2+=0.2")
+          .fromTo(silkroadpage, 0.4, {opacity:1}, {left:"-=100%"}, "search2")
+          .fromTo(this.badge2, 0.2, {opacity:0}, {opacity:1}, "search2+=0.2")
+      ;
+      this.tl.addLabel("search3", "search2+=0.9")
+          .set(this.hand, {opacity:1}, "search3")
+          .call(function() {stext.html(msgs[2][0]);})
+          .call(function() {anole.setSubtitle(msgs[2][1]);})
+          .fromTo(this.hand, 0.1, {opacity:1}, {left:"-=20%"}, "search3")
+          .fromTo(this.hand, 0.2, {opacity:1}, {left:"+=20%"}, "search3+=0.2")
+          .fromTo(silkroadpage, 0.4, {opacity:1}, {left:"-=100%"}, "search3")
+          .fromTo(this.badge3, 0.2, {opacity:0}, {opacity:1}, "search3+=0.2")
+          .to(this.marco, 0.2, {opacity:1}, "search3+=0.6")
+          .to(this.marco, 1, {})
+      ;
 
-        for (var i = 0; i < 4; i++) {
-            var bubble = $('<div></div>').addClass('worry-bubble').addClass('worry' + (i + 1))
-                .css('opacity', '0');
-            bubble.insertBefore(heads[i]);
-            this.bubbles.push(bubble);
-
-            var $comment = this.commentList[i];
-            var $commentBar = $('<div class="comment-bar"></div>').appendTo($comment);
-            var $commentLabel = $('<div class="comment-label">' + DATA[i].label + '</div>').appendTo($commentBar);
-            var $commentPercent = $('<div class="comment-percent">' + DATA[i].percent + '%s</div>').appendTo($commentBar);
-            this.$dataBars.push($commentBar);
-            this.$dataLabels.push($commentLabel);
-            this.$dataPercents.push($commentPercent);
-        }
-
-        this.$stars = $('<div class="stars"></div>').appendTo(this.container);
-        for (var i = 0; i < 10; i++) {
-            $('<div class="star"></div>').appendTo(this.$stars);
-        }
-    };
-
-    scene.animation = function() {
-        var all = this.comments.find('.comment');
-        var pgroup = []; // Ancenster elements to be background removed.
-        var group = []; // Elements to be set invisible
-        for (i = 4; i < all.length; i++) {
-            group.push(all[i]);
-        }
-
-        // Tracking back to find all siblings of parents.
-        // We need to fade them.
-        var p = this.comments;
-        if (p[0]) {
-            while (!p.hasClass('scene-content')) {
-                var others = p.siblings();
-                if (others.length) {
-                    group.push(others);
-                }
-                pgroup.push(p);
-                p = p.parent();
-            }
-        }
-
-        this.tl.set(pgroup, {backgroundSize: '0'})  // Cannot tween background-size :(.
-            .addLabel('fade')
-            .to(group, 0.5, {opacity: 0})
-            .to(pgroup, 0.5, {backgroundColor: 'transparent'}, 'fade')
-            .addLabel('bigger')
-            .to(this.container.find('.ctn-browser'), 0.3, {scale: 0.68, top: '+=50'}, 'bigger')
-            // hide comments
-            .addLabel('change')
-            .to(this.comments.find('.comment-head'), 0.3, {opacity: 0})
-            .to(this.comments.find('.comment-content'), 0.1, {scale: 0, opacity: 0}, 'change')
-            .addLabel('bubbles')
-            .to(this.$stars, 0.3, {opacity: 1}, 'bubbles+=0.3')
-
-        for (var idx in DATA) {
-            var interval = 0.15;
-            var $dataBar = this.$dataBars[idx];
-            var $bubble = this.bubbles[idx];
-            var $percent = this.$dataPercents[idx];
-            var delay = "bubbles+=" + (0.3 + interval * idx);
-            this.tl
-                .fromTo($bubble, interval, {scale: 0, opacity: 0},
-                {scale: 1, opacity: 1, ease: Elastic.easeOut}, delay)
-                .fromTo($dataBar, interval, {width: 0, opacity: 0}, {
-                    width: DATA[idx].percent * 14,
-                    opacity: 1
-                }, delay)
-                .fromTo($percent, interval, {opacity: 0, left: 0}, {
-                    opacity: 1,
-                    left: DATA[idx].percent * 14 + 50 // offset = 50
-                }, delay);
-        }
-    };
-    scene.cleanup = function() { // Called before entering next scene.
-        this.comments.find('.comment-head').remove();
-        this.comments.find('.dash').remove();
-        var list = this.comments.children();
-        list[4].remove();
-    };
-    anole.addScene(scene);
+  }
+  scene.cleanup = function() {
+  }
+  anole.addScene(scene);
 });

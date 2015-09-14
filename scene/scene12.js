@@ -1,81 +1,90 @@
-require(['anole', 'zepto'], function(anole, Scene) {
+;
+require(['anole', 'zepto', 'TweenLite', 'CSSPlugin', 'AttrPlugin', 'TimelineLite'], function(anole) {
 
-    // The timing probably need to refine according to the script
-    var TIME_DELTA = 0.25;
-    var MOVE_LATENCY = 0.5;
-    var VIDEO_LATENCY = 0;
-    var SWITCH_LATENCY = 0.5;
+	var scene = new anole.Scene(12, anole.canvas, false);
+	var sceneW = anole.getSceneW();
+	var sceneH = anole.getSceneH();
 
-    var background = $('<svg class="video-background" width="650" height="450"><polygon fill="grey" stroke="none" points="0,40 20,340 570,380 600,10"></polygon></path></svg>');
-
-    var scene = new anole.Scene(12, anole.canvas, true);
-    scene.name = 'scene12.js';
-
-    scene.createDom = function() {
-        this.koreanContainer = this.container.find('.koreans');
-        this.bg = this.container.find('.bg11');
-
-        this.frenchContainer = $("<div class='french'></div>").appendTo(this.bg);
-        this.french = $("<div id='f1'></div>").addClass("canadian f1").appendTo(this.frenchContainer);
-        this.videoBG = background.hide().appendTo(this.bg);
-        this.youtubeLogo = $('<div class="youtube-logo"></div>').hide().appendTo(this.bg);
-        this.video = $('<video webkit-playsinline="">' +
-        '<source src="./resource/french.webm" type="video/webm">' +
-        '<source src="./resource/french.mp4" type="video/mp4">' +
-        'Your browser does not support the video tag.</video>').hide().appendTo(this.bg)
-    };
-
-    scene.animation = function() {
-        var rotateCenter = "50% -100%";
-
-        this.tl.addLabel('rotate', "+=" + SWITCH_LATENCY)
-            // koreans go away
-            .to(this.koreanContainer, TIME_DELTA * 2, {
-                rotation: "-=180",
-                transformOrigin: rotateCenter,
-                ease: Elastic.easeIn.config(1, 0.6)
-            }, "rotate")
-            // setup french
-            .set(this.frenchContainer, {rotation: 0}, "rotate")
-            .to(this.frenchContainer, 0, {
-                rotation: "+=180",
-                transformOrigin: rotateCenter
-            })
-            .to(this.french, 0, {rotationY: 0})
-            // french come in
-            .to(this.frenchContainer, TIME_DELTA * 2, {
-                rotation: "-=180",
-                transformOrigin: rotateCenter,
-                ease: Elastic.easeOut.config(1, 0.6)
-            }, "+=0.25")
-            // move to left bottom
-            .to(this.french, TIME_DELTA * 2, {
-                left: "-280",
-                top: "+=120",
-                scale: '0.8',
-                ease: Power2.easeInOut
-            }, "+=" + MOVE_LATENCY)
-            .call(function() {
-                // move french div one level up to workaround the z-index issue.
-                this.french.appendTo(this.bg);
-            }.bind(this))
-            .addLabel('play', "+=" + VIDEO_LATENCY)
-            .to([this.videoBG, this.youtubeLogo], 0, {display: "block"}, "play")
-            .to([this.video], 0, {display: "block"}, "+=0.25")
-            .call(function() {
-                this.tl.pause(); // You can only do this when no other animation are being played.
-                anole.playMedia(this.video[0]);
-                this.video.on('ended', function() {
-                    this.tl.resume();
-                }.bind(this))
-            }.bind(this))
-            //hide elements
-            .set([this.videoBG, this.youtubeLogo, this.video, this.french], {display: "none"})
-    };
-    scene.cleanup = function() {
-        this.video[0].pause();
-        this.videoBG.remove();
-        this.koreanContainer.remove();
-    };
-    anole.addScene(scene);
+	scene.createDom = function() {
+		anole.setBackgroundColor('rgb(198,60,177)');
+		this.building = $("<img src='resource/build.png'>").addClass('building').appendTo(this.container);
+		this.clouds = $("<div class='clouds'></div>").appendTo(this.container);
+		this.cloud1 = $("<img src='resource/cloud.png'>").addClass('cloud1').appendTo(this.clouds);
+		this.cloud2 = $("<img src='resource/cloud.png'>").addClass('cloud2').appendTo(this.clouds);
+		this.friendlychinese = $("<div class='friendlychinese'></div>").appendTo(this.container);
+		this.friendlychinese_body = $("<img src='resource/friendlychinese.png'>").addClass('friendlychinese_body').appendTo(this.friendlychinese);
+		this.left_hand = $("<div class='left_hand'></div>").appendTo(this.friendlychinese);
+		this.right_hand = $("<div class='right_hand'></div>").appendTo(this.friendlychinese);
+		this.friendlymanarm1 = $("<img src='resource/friendlymanarm1.png'>").addClass('friendlymanarm1');
+		this.friendlymanarm2 = $("<img src='resource/friendlymanarm2.png'>").addClass('friendlymanarm2');
+		this.friendlymanarm1.appendTo(this.left_hand);
+		this.friendlymanarm2.appendTo(this.left_hand);
+		this.friendlymanarm3 = $("<img src='resource/friendlymanarm1.png'>").addClass('friendlymanarm1');
+		this.friendlymanarm4 = $("<img src='resource/friendlymanarm2.png'>").addClass('friendlymanarm2_right');
+		this.friendlymanarm3.appendTo(this.right_hand);
+		this.friendlymanarm4.appendTo(this.right_hand);
+		this.friendlymouth1 = $("<img src='resource/friendlymouth.png'>").addClass('friendlymouth1').appendTo(this.friendlychinese);
+		this.friendlymouth2 = $("<img src='resource/friendlymouth.png'>").addClass('friendlymouth2').appendTo(this.friendlychinese);
+		this.marco2_back = $("<div class='marco2_back'></div>").appendTo(this.container);
+		this.marco2_back_body = $("<img src='resource/marco2.0_back.png'>").addClass('marco2_back_body').appendTo(this.marco2_back);
+		this.marco20_handwithmap = $("<img src='resource/marco2.0_handwithmap.png'>").addClass('marco2_handwithmap').appendTo(this.marco2_back);
+		this.thumbsup1 = $("<img src='resource/thumbsup1.png'>").addClass('thumbsup1').appendTo(this.container);
+		this.thumbsup2 = $("<img src='resource/thumbsup2.png'>").addClass('thumbsup2').appendTo(this.container);
+		this.thumbsup3 = $("<img src='resource/thumbsup3.png'>").addClass('thumbsup3').appendTo(this.container);
+		this.thumbsup4 = $("<img src='resource/thumbsup4.png'>").addClass('thumbsup4').appendTo(this.container);
+		this.thumbsup5 = $("<img src='resource/thumbsup5.png'>").addClass('thumbsup5').appendTo(this.container);
+		this.thumbsup6 = $("<img src='resource/thumbsup6.png'>").addClass('thumbsup6').appendTo(this.container);
+		this.good_text = $("<div class='text1'>60<span>%</span></div><div class='text2'>点赞</div>").appendTo(this.container);
+	}
+	scene.animation = function() {
+		var msg1 = "幸好，中国人的包容和友善，";
+		var msg2 = "让近六成的游客体验超出预期。";
+		anole.setSubtitle(msg1);
+		this.tl = this.tl.addLabel("smile")
+		    .to(this.marco20_handwithmap, 0.8, {
+				bottom: "22%"
+			},"smile")
+			.staggerTo([this.friendlymouth1, this.friendlymouth2], 0.8, {
+				height: "5%"
+			},"smile")
+			.set([this.building, this.clouds, this.friendlychinese, this.marco2_back], {
+				display: "none",
+				delay: 1
+			})
+			.call(function() {
+				anole.setSubtitle(msg2);
+			})
+			.addLabel("show")
+			.to(this.good_text, 0.5, {
+				opacity: 1,
+				ease: Linear.easeIn,
+			}, "show")
+			.to(this.thumbsup1, 0.1, {
+				bottom: 0,
+				ease: Elastic.easeOut
+			}, "show+=0.2")
+			.to(this.thumbsup2, 0.1, {
+				bottom: 0,
+				ease: Elastic.easeOut
+			}, "show+=0.4")
+			.to(this.thumbsup3, 0.1, {
+				bottom: 0,
+				ease: Elastic.easeOut
+			}, "show+=0.6")
+			.to(this.thumbsup4, 0.1, {
+				bottom: 0,
+				ease: Elastic.easeOut
+			}, "show+=0.8")
+			.to(this.thumbsup5, 0.1, {
+				bottom: 0,
+				ease: Elastic.easeOut
+			}, "show+=1")
+			.to(this.thumbsup6, 0.1, {
+				bottom: 0,
+				ease: Elastic.easeOut
+			}, "show+=1.2")
+			.to(this.thumbsup6, 3.8, {});
+	}
+	scene.cleanup = function() {}
+	anole.addScene(scene);
 });
